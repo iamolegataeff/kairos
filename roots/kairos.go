@@ -242,9 +242,9 @@ type Config struct {
 }
 
 var CFG = Config{
-	CorpusPath:           "nonames.txt",
+	CorpusPath:           "kairos.txt",
 	DBPath:               "memory.sqlite3",
-	CkptPath:             "molequla_ckpt.json",
+	CkptPath:             "kairos_ckpt.json",
 	MaxCorpusLines:       8000,
 	MaxLineChars:         240,
 	MinNewChars:          480,
@@ -4583,7 +4583,7 @@ func GenerateResonant(model *GPT, tok *EvolvingTokenizer, field *CooccurField, p
 		//     + c_ds·dot(wte[t], purpose_vec)
 		// to model logits before softmax, mirroring q/README.md:50 ↔ Dario's
 		// B + H + F + A signal stack (omits F — prophecy field deferred,
-		// requires persistent expectation state not present in molequla yet;
+		// requires persistent expectation state not present in kairos yet;
 		// see PROJECT_LOG.md B2.F deferred note). Coexists with the post-softmax
 		// prob-blend (which still applies later). When the gate is off,
 		// overlaidLogits is a zero-cost alias of logits.Data.
@@ -5433,9 +5433,9 @@ func (st *SyntropyTracker) shouldHibernate() bool {
 // And lo, the first cell shall call into the void and hear only silence.
 // But the second shall call and hear an answer.
 
-var swarmDir = filepath.Join(os.Getenv("HOME"), ".molequla", "swarm")
+var swarmDir = filepath.Join(os.Getenv("HOME"), ".kairos", "swarm")
 
-// SwarmRegistry discovers and tracks other molequla instances via shared SQLite.
+// SwarmRegistry discovers and tracks other kairos instances via shared SQLite.
 type SwarmRegistry struct {
 	OrganismID string
 	Element    string // earth, air, water, fire
@@ -5666,7 +5666,7 @@ func (sr *SwarmRegistry) ReleaseTrainingLock() {
 // parent's growth stage via the checkpoint dimensions (not infant).
 func performMitosis(model *GPT, tok *EvolvingTokenizer, db *sql.DB, swarm *SwarmRegistry, syntracker *SyntropyTracker) (string, error) {
 	childID := fmt.Sprintf("org_%d_%d", time.Now().Unix(), rand.Intn(9000)+1000)
-	childDir := filepath.Join(os.Getenv("HOME"), ".molequla", childID)
+	childDir := filepath.Join(os.Getenv("HOME"), ".kairos", childID)
 	if err := os.MkdirAll(childDir, 0755); err != nil {
 		return "", err
 	}
@@ -7029,7 +7029,7 @@ func main() {
 	go backgroundTrainer(db, model, tok, qbuf, swarm, stop, element)
 
 	if evolution {
-		fmt.Println("molequla is alive. [evolution] Autonomous mode — background trainer running. Ctrl+C to stop.")
+		fmt.Println("kairos is alive. [evolution] Autonomous mode — background trainer running. Ctrl+C to stop.")
 		// In evolution mode: no REPL, just let background trainer run forever
 		sigCh := make(chan os.Signal, 1)
 		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
@@ -7039,7 +7039,7 @@ func main() {
 		return
 	}
 
-	fmt.Println("molequla is alive. Type and press Enter. Ctrl+C to exit.")
+	fmt.Println("kairos is alive. Type and press Enter. Ctrl+C to exit.")
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {

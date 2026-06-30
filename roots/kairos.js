@@ -28,7 +28,7 @@
 
 const CFG = {
     // data
-    corpusUrl: "nonames.txt",
+    corpusUrl: "kairos.txt",
     maxCorpusLines: 8000,
     maxLineChars: 240,
 
@@ -219,14 +219,14 @@ function randomSample(arr, n) {
 // And lo, the organism shall remember, even after the tab is closed.
 // IndexedDB: the most powerful storage API nobody asked for.
 
-class MolequlaDB {
+class KairosDB {
     constructor() {
         this.db = null;
     }
 
     async open() {
         return new Promise((resolve, reject) => {
-            const req = indexedDB.open("molequla_memory", 3);
+            const req = indexedDB.open("kairos_memory", 3);
             req.onupgradeneeded = (e) => {
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains("messages")) {
@@ -324,7 +324,7 @@ class MolequlaDB {
             req.onerror = () => {
                 const err = req.error;
                 if (err && err.name === "QuotaExceededError") {
-                    console.error(`[molequla] Storage quota exceeded while saving "${key}". Try clearing old data.`);
+                    console.error(`[kairos] Storage quota exceeded while saving "${key}". Try clearing old data.`);
                 }
                 reject(err);
             };
@@ -342,7 +342,7 @@ class MolequlaDB {
 }
 
 // And lo, the database shall be a singleton, because two memories would be schizophrenia.
-const DB = new MolequlaDB();
+const DB = new KairosDB();
 
 // ============================================================
 // 1.5) DB HELPERS — growth logging, message retrieval
@@ -376,7 +376,7 @@ const DEFAULT_CORPUS = [
     "I am learning to speak one word at a time.",
     "The weather is nice today.",
     "What is your name?",
-    "My name is Molequla.",
+    "My name is Kairos.",
     "How does the brain work?",
     "Nobody really knows for sure.",
     "Tell me something interesting.",
@@ -3257,7 +3257,7 @@ class SwarmRegistry {
 
     register() {
         if (typeof BroadcastChannel === "undefined") return; // fallback: no swarm
-        this.channel = new BroadcastChannel("molequla_swarm");
+        this.channel = new BroadcastChannel("kairos_swarm");
         this._onMessage = (event) => {
             const msg = event.data;
             if (!msg || !msg.id || msg.id === this.organismId) return;
@@ -3624,7 +3624,7 @@ async function handleUserMessage(text) {
         _model.conscienceCheck(_model.lastGenEntropy);
     }
 
-    appendChat("molequla", answer);
+    appendChat("kairos", answer);
     await DB.addMessage("assistant", answer);
 
     // Self-enrichment: own output enriches corpus field, weighted by coherence
@@ -3711,7 +3711,7 @@ function createUI() {
         }
         .mol-msg { padding: 6px 12px; border-radius: 6px; max-width: 80%; word-wrap: break-word; }
         .mol-user { background: #1a1a2e; color: #aaa; align-self: flex-end; }
-        .mol-molequla { background: #0f1f0f; color: #8f8; align-self: flex-start; border: 1px solid #1a3a1a; }
+        .mol-kairos { background: #0f1f0f; color: #8f8; align-self: flex-start; border: 1px solid #1a3a1a; }
         .mol-input-wrap {
             padding: 12px 16px; background: #12121a; border-top: 1px solid #222;
             display: flex; gap: 8px;
@@ -3740,7 +3740,7 @@ function createUI() {
     container.style.cssText = "height:100vh;display:flex;flex-direction:column;";
     container.innerHTML = `
         <div class="mol-header">
-            <span class="mol-title">molequla.js</span>
+            <span class="mol-title">kairos.js</span>
             <span class="mol-status" id="mol-status">[initializing]</span>
         </div>
         <div class="mol-main">
@@ -3748,7 +3748,7 @@ function createUI() {
         </div>
         <div class="mol-input-wrap">
             <input class="mol-input" id="mol-input" type="text"
-                   placeholder="speak to molequla..." autocomplete="off" />
+                   placeholder="speak to kairos..." autocomplete="off" />
             <button class="mol-send" id="mol-send">send</button>
         </div>
         <div class="mol-log" id="mol-log"></div>
@@ -3790,7 +3790,7 @@ function createUI() {
 async function awaken() {
     createUI();
     setStatus("opening memory...");
-    logUI("molequla.js — a GPT organism in your browser. Zero dependencies.");
+    logUI("kairos.js — a GPT organism in your browser. Zero dependencies.");
     logUI("Born from nonames.txt. Persisted in IndexedDB. Trained by conversation.");
 
     // Open IndexedDB
@@ -3936,8 +3936,8 @@ async function awaken() {
     setTimeout(trainerTick, 100);
 
     setStatus("alive");
-    logUI("molequla is alive. Type and press Enter.");
-    appendChat("molequla", "I am here. I am learning. Speak to me.");
+    logUI("kairos is alive. Type and press Enter.");
+    appendChat("kairos", "I am here. I am learning. Speak to me.");
 
     document.getElementById("mol-input").focus();
 }

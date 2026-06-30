@@ -118,8 +118,8 @@ struct Config {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            corpus_path: "nonames.txt".into(), db_path: "memory.sqlite3".into(),
-            ckpt_path: "molequla_ckpt.json".into(),
+            corpus_path: "kairos.txt".into(), db_path: "memory.sqlite3".into(),
+            ckpt_path: "kairos_ckpt.json".into(),
             max_corpus_lines: 8000, max_line_chars: 240, min_new_chars_to_train: 480,
             tie_embeddings: true, n_layer: 1, n_embd: 16, n_head: 1, block_size: 96,
             // embryo: ~10K params, infant: ~28K params, child: ~154K params, adolescent: ~1.1M params, teen: ~4.1M params, adult: ~10M params
@@ -2586,7 +2586,7 @@ struct SwarmRegistry {
 impl SwarmRegistry {
     fn new(id: &str, element: &str) -> Self {
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-        let dir = format!("{}/.molequla/swarm", home);
+        let dir = format!("{}/.kairos/swarm", home);
         SwarmRegistry { organism_id: id.into(), element: element.into(), swarm_dir: dir, mesh_db: None }
     }
 
@@ -2895,11 +2895,11 @@ fn background_trainer(
         if m.tok.maybe_enable_bpe(&docs, &cfg) {
             let vs = m.tok.vocab_size;
             m.maybe_expand_vocab(vs);
-            eprintln!("[molequla.rs] BPE enabled, vocab={}", vs);
+            eprintln!("[kairos.rs] BPE enabled, vocab={}", vs);
         }
     }
 
-    eprintln!("[molequla.rs] Entering quantum burst loop.");
+    eprintln!("[kairos.rs] Entering quantum burst loop.");
 
     // Burst loop
     while !stop.load(Ordering::Relaxed) {
@@ -3004,7 +3004,7 @@ fn background_trainer(
         let grow_prob = decision.delta_grow_override.unwrap_or(cfg.delta_grow_prob);
         if rand::thread_rng().gen::<f64>() < grow_prob {
             m.add_delta_module(1.0);
-            eprintln!("[molequla.rs] Delta module added, total={}", m.deltas.len());
+            eprintln!("[kairos.rs] Delta module added, total={}", m.deltas.len());
         }
 
         qbuf.lock().unwrap().reset();
@@ -3020,14 +3020,14 @@ fn background_trainer(
         // Save checkpoint periodically
         if tick % 50 == 0 {
             save_checkpoint(&m, &cfg.ckpt_path).ok();
-            eprintln!("[molequla.rs] Checkpoint saved.");
+            eprintln!("[kairos.rs] Checkpoint saved.");
         }
     }
 
     // Final save
     let m = model.lock().unwrap();
     save_checkpoint(&m, &cfg.ckpt_path).ok();
-    eprintln!("[molequla.rs] Final checkpoint saved.");
+    eprintln!("[kairos.rs] Final checkpoint saved.");
 }
 
 // ============================================================
@@ -3294,7 +3294,7 @@ fn topology_monitor_thread(
 
 fn main() {
     eprintln!("╔══════════════════════════════════════════════════╗");
-    eprintln!("║  MOLEQULA.RS — The Fourth Element                ║");
+    eprintln!("║  KAIROS.RS — The Fourth Element                  ║");
     eprintln!("║  GPT organism + distributed cognition metabolism ║");
     eprintln!("╚══════════════════════════════════════════════════╝");
 
@@ -3416,7 +3416,7 @@ fn main() {
     // Topology Monitor (Feature 6 — Rust-only)
     let topo_handle = {
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-        let mesh_path = format!("{}/.molequla/swarm/mesh.db", home);
+        let mesh_path = format!("{}/.kairos/swarm/mesh.db", home);
         let m = Arc::clone(&model);
         let st = Arc::clone(&stop);
         let oid = organism_id.clone();
